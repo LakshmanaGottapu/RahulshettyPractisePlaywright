@@ -24,15 +24,18 @@ test.describe("login feature test", ()=>{
         console.log('-----------valid username but invalid password------------')
         await loginPage.enterCredentials("rahulshettyacademy", "Learning@830$3mK")
         await loginPage.submit()
+        expect.soft((await page.locator('.alert.alert-danger').textContent())?.trim()).toContain('Incorrect username/password')
         await page.waitForTimeout(2000)
         console.log('-----------invalid username but valid password------------')
         await loginPage.enterCredentials("rahulshettyacadem", "Learning@830$3mK2")
         await loginPage.submit()
         await page.waitForTimeout(2000)
+        expect.soft((await page.locator('.alert.alert-danger').textContent())?.trim()).toContain('Incorrect username/password')
         console.log('-----------invalid username and invalid password------------')
         await loginPage.enterCredentials("rahulshettyacadem", "Learning@830$3mK")
         await loginPage.submit()
-       
+        expect.soft(await page.locator('.alert.alert-danger').textContent()).toContain('Incorrect username/password')
     })
+    
 
 })
