@@ -5,7 +5,7 @@ test.describe("login feature test", ()=>{
     test.beforeEach("Navigate to Login Page", async ({page}) => {
         await page.goto("https://rahulshettyacademy.com/loginpagePractise/")
     })
-    test("empty credentials", async ({page})=>{
+    test("->login test: empty credentials", async ({page})=>{
         const loginPage = new LoginPage(page)
         await test.step('empty username and password', async () => {
             await loginPage.enterCredentials("", "")
@@ -25,7 +25,7 @@ test.describe("login feature test", ()=>{
             expect(await page.locator('.alert.alert-danger').textContent()).toContain('Empty username/password')
         })
     })
-    test("wrong credentials", async ({page}) => {
+    test("->login test: wrong credentials", async ({page}) => {
         const loginPage = new LoginPage(page)
         await test.step('valid username but invalid password', async () => {
             await loginPage.enterCredentials("rahulshettyacademy", "Learning@830$3mK")
@@ -45,4 +45,35 @@ test.describe("login feature test", ()=>{
             expect.soft(await page.locator('.alert.alert-danger').textContent()).toContain('Incorrect username/password')
         })
     })
+    test("->login test: validate alert prompt for changing role to user", async ({page}) => {
+        const loginPage = new LoginPage(page) 
+        await test.step("->step: modal visibilty", async () => {
+            await expect(loginPage.modal).toBeHidden()
+            await loginPage.selectUser()
+            await expect(loginPage.modal).toBeVisible()        
+        })
+        await test.step("->step: alert text", async () => {
+            expect(await loginPage.alertText()).toContain('You will be limited to only fewer functionalities of the app. Proceed?')
+        })
+        await test.step("->step: alert cancel", async () => {
+            await loginPage.alertCancel()
+            await expect(loginPage.modal).toBeHidden()
+            expect(await loginPage.userRadio.isChecked()).toBeFalsy()
+            expect(await loginPage.adminRadio.isChecked()).toBeTruthy()
+        })
+        await test.step("->step: alert okay", async () => {
+            await loginPage.selectUser()
+            await loginPage.alertOkay()
+            expect(await loginPage.userRadio.isChecked()).toBeTruthy()
+            expect(await loginPage.adminRadio.isChecked()).toBeFalsy()
+        })
+    })
+    test("->login test: valid credentials", async ({page}) => {
+        const loginPage = new LoginPage(page)
+        await loginPage.enterCredentials("rahulshettyacademy", "Learning@830$3mK2")
+        await loginPage.submit()
+        await expect(page).toHaveURL('https://rahulshettyacademy.com/angularpractice/shop')
+        await expect(page).toHaveTitle('ProtoCommerce')
+    })
 })
+
