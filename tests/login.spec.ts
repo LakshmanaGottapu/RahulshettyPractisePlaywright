@@ -1,9 +1,10 @@
 import {test, expect} from '@playwright/test'
 import LoginPage from '../pages/loginpage'
-
+import {getUIConfig} from '../config/env'
+const {LOGIN_URL, LOGIN_USERNAME, LOGIN_PASSWORD, HOME_URL}  = getUIConfig()
 test.describe("login feature test", ()=>{
     test.beforeEach("Navigate to Login Page", async ({page}) => {
-        await page.goto("https://rahulshettyacademy.com/loginpagePractise/")
+        if(LOGIN_URL) await page.goto(LOGIN_URL)
     })
     test("->login test: empty credentials", async ({page})=>{
         const loginPage = new LoginPage(page)
@@ -70,9 +71,11 @@ test.describe("login feature test", ()=>{
     })
     test("->login test: valid credentials", async ({page}) => {
         const loginPage = new LoginPage(page)
-        await loginPage.enterCredentials("rahulshettyacademy", "Learning@830$3mK2")
+        if(LOGIN_USERNAME && LOGIN_PASSWORD)
+        await loginPage.enterCredentials(LOGIN_USERNAME, LOGIN_PASSWORD)
         await loginPage.submit()
-        await expect(page).toHaveURL('https://rahulshettyacademy.com/angularpractice/shop')
+        if(HOME_URL)
+            await expect(page).toHaveURL(HOME_URL)
         await expect(page).toHaveTitle('ProtoCommerce')
     })
 })
