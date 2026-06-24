@@ -6,5 +6,7 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
-.env
 storageState.json
+.env
+.env.staging
+.env.production

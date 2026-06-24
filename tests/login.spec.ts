@@ -6,7 +6,7 @@ test.describe("login feature test", ()=>{
     test.beforeEach("Navigate to Login Page", async ({page}) => {
         if(LOGIN_URL) await page.goto(LOGIN_URL)
     })
-    test("->login test: empty credentials", async ({page})=>{
+    test.only("->login test: empty credentials", async ({page})=>{
         const loginPage = new LoginPage(page)
         await test.step('empty username and password', async () => {
             await loginPage.enterCredentials("", "")

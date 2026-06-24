@@ -1,8 +1,26 @@
 import { chromium } from "@playwright/test";
 import dotenv from 'dotenv'
+
+const envFiles = {
+    local: '.env',
+    stage: '.env.staging',
+    production: '.env.production'
+}
+type Environment = keyof typeof envFiles
+function isValidEnvironment(env:string):env is Environment{
+    return env in envFiles
+}
+
 export default async function setup(){
-    dotenv.config()
-    console.log(process.env.Stage)
+    const environment = process.env.TEST_ENV?.toLowerCase()
+    if(!environment) throw new Error(`TEST_ENV is not set. Must be one of : ${Object.keys(envFiles).join(', ')}`)
+    if(isValidEnvironment(environment))
+        dotenv.config({path:envFiles[environment]})
+    else throw new Error(
+        `❌ Invalid TEST_ENV: "${environment}". Must be one of: ${Object.keys(envFiles).join(', ')}\n` +
+        `   Example: TEST_ENV=staging npx playwright test`
+    )
+    console.log(environment)
     const browser = await chromium.launch()
     const page = await browser.newPage();
     await page.goto('https://rahulshettyacademy.com/loginpagePractise/')
