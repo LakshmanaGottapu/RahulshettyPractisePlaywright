@@ -8,6 +8,7 @@ export default class LoginPage {
     readonly userCategoryDropdown:Locator
     readonly termsCheckbox:Locator
     readonly siginButton:Locator
+    readonly dangerAlert:Locator
     readonly modal: Locator
     readonly modalBody:Locator
     readonly modalCancelBtn:Locator
@@ -20,6 +21,7 @@ export default class LoginPage {
         this.userCategoryDropdown = page.locator('[data-style="btn-info"]')
         this.termsCheckbox = page.getByLabel('terms')
         this.siginButton = page.locator('#signInBtn')
+        this.dangerAlert = page.locator('.alert.alert-danger')
         this.modal = page.locator('#myModal')
         this.modalBody = page.locator('.modal-body>p')
         this.modalCancelBtn = page.locator('#cancelBtn')
@@ -40,6 +42,9 @@ export default class LoginPage {
     }
     async agreeTerms(){
         await this.termsCheckbox.click()
+    }
+    async dangerAlertText():Promise<string|null>{
+        return await this.dangerAlert.textContent()
     }
     async alertText(){
         return await this.modalBody.textContent()

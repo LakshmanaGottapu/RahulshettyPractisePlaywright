@@ -3,16 +3,25 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test:local": "cross-env TEST_ENV=local npx playwright test",
+    "test:staging": "cross-env TEST_ENV=staging npx playwright test",
+    "test:prod": "cross-env TEST_ENV=production npx playwright test",
+    "test:ci": "cross-env TEST_ENV=staging npx playwright test --reporter=html",
+    "test:smoke": "cross-env TEST_ENV=staging npx playwright test --grep @smoke"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "@playwright/test": "^1.60.0",
-    "@types/node": "^25.9.4"
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^25.9.4",
+    "cross-env": "^10.1.0"
   },
   "dependencies": {
+    "@faker-js/faker": "^10.5.0",
+    "@types/faker": "^6.6.8",
     "dotenv": "^17.4.2"
   }
 }

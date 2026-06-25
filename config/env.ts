@@ -7,12 +7,6 @@ function optionalENV(key:string){
     return process.env[key] ?? ''
 }
 
-/*
-    UIConfig    is only validated when someone imports it
-    DBConfig    is only validated when someone imports it
-    APIConfig   is only validated when someone imports it
- */
-
 export const getUIConfig = () => ({
     LOGIN_URL : requireEnv("LOGIN_URL"),
     LOGIN_USERNAME: requireEnv("LOGIN_USERNAME"),

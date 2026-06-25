@@ -1,52 +1,64 @@
 import {test, expect} from '@playwright/test'
 import LoginPage from '../pages/loginpage'
-import {getUIConfig} from '../config/env'
-const {LOGIN_URL, LOGIN_USERNAME, LOGIN_PASSWORD, HOME_URL}  = getUIConfig()
-test.describe("login feature test", ()=>{
+import { AlertMessages, PageTitles } from '../constants/messages/loginMessages'
+import {InvalidCredentials, ValidCredentials} from "../constants/testData/loginData"
+
+const {LOGIN_URL, LOGIN_USERNAME, LOGIN_PASSWORD, HOME_URL}  = ValidCredentials
+const { WRONG_PASSWORD, WRONG_USERNAME, BOTH_WRONG, EMPTY_PASSWORD, EMPTY_USERNAME } = InvalidCredentials
+const { MSG_EMPTY_CREDENTIALS, MSG_INVALID_CREDENTIALS, MSG_USER_ROLE_CHANGE } = AlertMessages
+const {LOGIN_TITLE, SHOP_TITLE} = PageTitles
+
+test.describe("login feature test", {tag:"@login"}, ()=>{
     test.beforeEach("Navigate to Login Page", async ({page}) => {
         if(LOGIN_URL) await page.goto(LOGIN_URL)
+        await expect(page).toHaveTitle(LOGIN_TITLE)
     })
-    test.only("->login test: empty credentials", async ({page})=>{
+    test("->login test: empty credentials @sanity", async ({page})=>{
         const loginPage = new LoginPage(page)
         await test.step('empty username and password', async () => {
             await loginPage.enterCredentials("", "")
             await loginPage.submit()
-            expect.soft(await page.locator('.alert.alert-danger').textContent()).toContain('Empty username/password')
+            expect.soft(await loginPage.dangerAlertText()).toContain(MSG_EMPTY_CREDENTIALS)
         })
         await page.waitForTimeout(2000)
         await test.step("valid username but empty password", async () => {
-            await loginPage.enterCredentials("rahulshettyacademy", "")
+            const {username, password} = EMPTY_PASSWORD
+            await loginPage.enterCredentials(username, password)
             await loginPage.submit()
-            expect.soft(await page.locator('.alert.alert-danger').textContent()).toContain('Empty username/password')
+            expect.soft(await loginPage.dangerAlertText()).toContain(MSG_EMPTY_CREDENTIALS)
         })
         await page.waitForTimeout(2000)
         await test.step("empty username but a valid password", async () =>{
-            await loginPage.enterCredentials("", "Learning@830$3mK2")
+            const {username, password} = EMPTY_USERNAME
+            await loginPage.enterCredentials(username, password)
             await loginPage.submit()
-            expect(await page.locator('.alert.alert-danger').textContent()).toContain('Empty username/password')
+            expect(await loginPage.dangerAlertText()).toContain(MSG_EMPTY_CREDENTIALS)
         })
     })
-    test("->login test: wrong credentials", async ({page}) => {
+    test("->login test: invalid credentials", {tag: ['@regression']}, async ({page}) => {
         const loginPage = new LoginPage(page)
         await test.step('valid username but invalid password', async () => {
-            await loginPage.enterCredentials("rahulshettyacademy", "Learning@830$3mK")
+            const {username, password} = WRONG_PASSWORD
+            await loginPage.enterCredentials(username, password)
             await loginPage.submit()
-            expect.soft((await page.locator('.alert.alert-danger').textContent())?.trim()).toContain('Incorrect username/password')
+            expect.soft((await loginPage.dangerAlertText())?.trim()).toContain(MSG_INVALID_CREDENTIALS)
         })
         await page.waitForTimeout(2000)
         await test.step('invalid username but valid password', async () => {
-            await loginPage.enterCredentials("rahulshettyacadem", "Learning@830$3mK2")
+            const {username, password} = WRONG_USERNAME
+            await loginPage.enterCredentials(username, password)
             await loginPage.submit()
-            expect.soft((await page.locator('.alert.alert-danger').textContent())?.trim()).toContain('Incorrect username/password')
+            expect.soft((await loginPage.dangerAlertText())?.trim()).toContain(MSG_INVALID_CREDENTIALS)
         })
         await page.waitForTimeout(2000)
         await test.step('invalid username and invalid password', async () => {
-            await loginPage.enterCredentials("rahulshettyacadem", "Learning@830$3mK")
+            const {username, password} = BOTH_WRONG
+            await loginPage.enterCredentials(username, password)
             await loginPage.submit()
-            expect.soft(await page.locator('.alert.alert-danger').textContent()).toContain('Incorrect username/password')
+            expect.soft(await loginPage.dangerAlertText()).toContain(MSG_INVALID_CREDENTIALS)
         })
     })
-    test("->login test: validate alert prompt for changing role to user", async ({page}) => {
+    test("->login test: validate alert prompt for changing role to user", {tag: ['@sanity', '@regression']}, async ({page}) => {
         const loginPage = new LoginPage(page) 
         await test.step("->step: modal visibilty", async () => {
             await expect(loginPage.modal).toBeHidden()
@@ -54,7 +66,7 @@ test.describe("login feature test", ()=>{
             await expect(loginPage.modal).toBeVisible()        
         })
         await test.step("->step: alert text", async () => {
-            expect(await loginPage.alertText()).toContain('You will be limited to only fewer functionalities of the app. Proceed?')
+            expect(await loginPage.alertText()).toContain(MSG_USER_ROLE_CHANGE)
         })
         await test.step("->step: alert cancel", async () => {
             await loginPage.alertCancel()
@@ -69,14 +81,14 @@ test.describe("login feature test", ()=>{
             expect(await loginPage.adminRadio.isChecked()).toBeFalsy()
         })
     })
-    test("->login test: valid credentials", async ({page}) => {
+    test("->login test: valid credentials @smoke", {tag: ['@sanity']}, async ({page}) => {
         const loginPage = new LoginPage(page)
         if(LOGIN_USERNAME && LOGIN_PASSWORD)
         await loginPage.enterCredentials(LOGIN_USERNAME, LOGIN_PASSWORD)
         await loginPage.submit()
         if(HOME_URL)
             await expect(page).toHaveURL(HOME_URL)
-        await expect(page).toHaveTitle('ProtoCommerce')
+        await expect(page).toHaveTitle(SHOP_TITLE)
     })
 })
 
