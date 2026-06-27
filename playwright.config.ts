@@ -1,14 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
-
-/**
  * See https://playwright.dev/docs/test-configuration.
  */
 const browsers = [{name:'chromium', use:{...devices['Desktop chrome']}}, {name: 'firefox', use:{...devices['Desktop firefox']}}, {name: 'webkit',use: { ...devices['Desktop Safari'] }}]
@@ -37,24 +29,8 @@ export default defineConfig({
   },
 
   /* Configure projects for major browsers */
-  projects: [
-    ...browsers.map(browser => {
-      return { 
-        name: `login-tests-${browser.name}`,
-        testMatch: '**/login.spec.ts',
-        use: {...browser.use}
-      }    
-    }),
-    ...browsers.map(browser => {
-      return { 
-        name: `app-tests-${browser.name}`,
-        testMatch: '**/*.spec.ts',
-        testIgnore: '**/login.spec.ts',
-        use: browser.use,
-        storageState: './storageState.json'
-      }    
-    })
-  ]
+  projects: [ ...browsers]
+  
   // projects: [
   //   {
   //     name: 'login-tests-chromium',
@@ -69,38 +45,8 @@ export default defineConfig({
   //       ...devices['Desktop Chrome'],
   //       storageState: './storageState.json'
   //     },
-  //   }
+  //   }]
 
-  //   // {
-  //   //   name: 'firefox',
-  //   //   use: { ...devices['Desktop Firefox'] },
-  //   // },
-
-  //   // {
-  //   //   name: 'webkit',
-  //   //   use: { ...devices['Desktop Safari'] },
-  //   // },
-
-  //   /* Test against mobile viewports. */
-  //   // {
-  //   //   name: 'Mobile Chrome',
-  //   //   use: { ...devices['Pixel 5'] },
-  //   // },
-  //   // {
-  //   //   name: 'Mobile Safari',
-  //   //   use: { ...devices['iPhone 12'] },
-  //   // },
-
-  //   /* Test against branded browsers. */
-  //   // {
-  //   //   name: 'Microsoft Edge',
-  //   //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-  //   // },
-  //   // {
-  //   //   name: 'Google Chrome',
-  //   //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-  //   // },
-  // ],
 
   /* Run your local dev server before starting the tests */
   // webServer: {

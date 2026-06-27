@@ -3,7 +3,7 @@ import LoginPage from '../pages/loginpage'
 import { AlertMessages, PageTitles } from '../constants/messages/loginMessages'
 import {InvalidCredentials, ValidCredentials} from "../constants/testData/loginData"
 
-const {LOGIN_URL, LOGIN_USERNAME, LOGIN_PASSWORD, HOME_URL}  = ValidCredentials
+const {LOGIN_URL, LOGIN_USERNAME, LOGIN_PASSWORD, SHOP_URL}  = ValidCredentials
 const { WRONG_PASSWORD, WRONG_USERNAME, BOTH_WRONG, EMPTY_PASSWORD, EMPTY_USERNAME } = InvalidCredentials
 const { MSG_EMPTY_CREDENTIALS, MSG_INVALID_CREDENTIALS, MSG_USER_ROLE_CHANGE } = AlertMessages
 const {LOGIN_TITLE, SHOP_TITLE} = PageTitles
@@ -86,8 +86,8 @@ test.describe("login feature test", {tag:"@login"}, ()=>{
         if(LOGIN_USERNAME && LOGIN_PASSWORD)
         await loginPage.enterCredentials(LOGIN_USERNAME, LOGIN_PASSWORD)
         await loginPage.submit()
-        if(HOME_URL)
-            await expect(page).toHaveURL(HOME_URL)
+        if(SHOP_URL)
+            await expect(page).toHaveURL(SHOP_URL)
         await expect(page).toHaveTitle(SHOP_TITLE)
     })
 })

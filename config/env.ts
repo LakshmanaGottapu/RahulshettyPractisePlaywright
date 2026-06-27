@@ -11,7 +11,7 @@ export const getUIConfig = () => ({
     LOGIN_URL : requireEnv("LOGIN_URL"),
     LOGIN_USERNAME: requireEnv("LOGIN_USERNAME"),
     LOGIN_PASSWORD: requireEnv("LOGIN_PASSWORD"),
-    HOME_URL: requireEnv("HOME_URL")
+    SHOP_URL: requireEnv("SHOP_URL")
 })
 
 export const getDBConfig = () => ({
