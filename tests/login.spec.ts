@@ -20,14 +20,14 @@ test.describe("login feature test", {tag:"@login"}, ()=>{
             await loginPage.submit()
             expect.soft(await loginPage.dangerAlertText()).toContain(MSG_EMPTY_CREDENTIALS)
         })
-        await page.waitForTimeout(2000)
+        await expect(loginPage.dangerAlert).toBeHidden();
         await test.step("valid username but empty password", async () => {
             const {username, password} = EMPTY_PASSWORD
             await loginPage.enterCredentials(username, password)
             await loginPage.submit()
             expect.soft(await loginPage.dangerAlertText()).toContain(MSG_EMPTY_CREDENTIALS)
         })
-        await page.waitForTimeout(2000)
+        await expect(loginPage.dangerAlert).toBeHidden();
         await test.step("empty username but a valid password", async () =>{
             const {username, password} = EMPTY_USERNAME
             await loginPage.enterCredentials(username, password)
@@ -43,14 +43,14 @@ test.describe("login feature test", {tag:"@login"}, ()=>{
             await loginPage.submit()
             expect.soft((await loginPage.dangerAlertText())?.trim()).toContain(MSG_INVALID_CREDENTIALS)
         })
-        await page.waitForTimeout(2000)
+        await expect(loginPage.dangerAlert).toBeHidden();
         await test.step('invalid username but valid password', async () => {
             const {username, password} = WRONG_USERNAME
             await loginPage.enterCredentials(username, password)
             await loginPage.submit()
             expect.soft((await loginPage.dangerAlertText())?.trim()).toContain(MSG_INVALID_CREDENTIALS)
         })
-        await page.waitForTimeout(2000)
+        await expect(loginPage.dangerAlert).toBeHidden();
         await test.step('invalid username and invalid password', async () => {
             const {username, password} = BOTH_WRONG
             await loginPage.enterCredentials(username, password)
