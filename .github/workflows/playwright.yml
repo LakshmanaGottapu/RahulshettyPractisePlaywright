@@ -1,14 +1,26 @@
 name: Playwright Tests
+
 on:
-  push:
-    branches: [ develop ]
-  pull_request:
-    branches: [ develop ]
+  workflow_dispatch: 
+    inputs:
+      suite:
+        type: choice
+        required: true
+        options: 
+          - smoke
+          - sanity
+          - regression
+        default: smoke
 
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    env:
+      LOGIN_URL: ${{ vars['STAGING_LOGIN_URL'] }}
+      SHOP_URL: ${{ vars.STAGING_SHOP_URL }}
+      LOGIN_USERNAME: ${{ secrets.STAGING_LOGIN_USERNAME }}
+      LOGIN_PASSWORD: ${{ secrets.STAGING_LOGIN_PASSWORD }}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -19,13 +31,7 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright tests
-      env:
-        TEST_ENV: staging
-        LOGIN_URL: ${{ vars['STAGING_LOGIN_URL'] }}
-        SHOP_URL: ${{ vars.STAGING_SHOP_URL }}
-        LOGIN_USERNAME: ${{ secrets.STAGING_LOGIN_USERNAME }}
-        LOGIN_PASSWORD: ${{ secrets.STAGING_LOGIN_PASSWORD }}
-      run: npx playwright test
+      run: npm run test:ci -- --grep "@${{inputs.suite}}"
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
