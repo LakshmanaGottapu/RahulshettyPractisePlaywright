@@ -8,6 +8,23 @@ const { WRONG_PASSWORD, WRONG_USERNAME, BOTH_WRONG, EMPTY_PASSWORD, EMPTY_USERNA
 const { MSG_EMPTY_CREDENTIALS, MSG_INVALID_CREDENTIALS, MSG_USER_ROLE_CHANGE } = AlertMessages
 const {LOGIN_TITLE, SHOP_TITLE} = PageTitles
 
+test.describe("UI Controls", () => {
+    test.beforeEach("Navigate to Login Page", async ({page}) => {
+        if(LOGIN_URL) await page.goto(LOGIN_URL)
+        await expect(page).toHaveTitle(LOGIN_TITLE)
+    })
+    test("user category dropdown", async ({page}) => {
+        const loginPage = new LoginPage(page)
+        const userCategories = await loginPage.fetchUserCategories()
+        console.log(userCategories)
+        for(let {value, label} of userCategories){
+            console.log({value, label})
+            await loginPage.selectUserCategory(label)
+            expect(await loginPage.userCategoryDropdown.inputValue()).toEqual(value)
+        }
+        
+    })
+})
 test.describe("login feature test", {tag:"@login"}, ()=>{
     test.beforeEach("Navigate to Login Page", async ({page}) => {
         if(LOGIN_URL) await page.goto(LOGIN_URL)

@@ -1,11 +1,12 @@
 import { Locator, Page } from "@playwright/test"
-
+import { fetchDropdownOptions } from "../utils/util"
 export default class LoginPage {
     readonly usernameField:Locator
     readonly passwordField:Locator
     readonly adminRadio:Locator
     readonly userRadio: Locator
     readonly userCategoryDropdown:Locator
+    readonly userCategoryOptions:Locator
     readonly termsCheckbox:Locator
     readonly siginButton:Locator
     readonly dangerAlert:Locator
@@ -19,6 +20,7 @@ export default class LoginPage {
         this.adminRadio = page.getByLabel('Admin', {exact:true})
         this.userRadio = page.getByLabel('User', {exact:true})
         this.userCategoryDropdown = page.locator('[data-style="btn-info"]')
+        this.userCategoryOptions = this.userCategoryDropdown.locator('option')
         this.termsCheckbox = page.getByLabel('terms')
         this.siginButton = page.locator('#signInBtn')
         this.dangerAlert = page.locator('.alert.alert-danger')
@@ -37,6 +39,9 @@ export default class LoginPage {
     async selectUser(){
         await this.userRadio.check()
     }
+
+    fetchUserCategories = () => fetchDropdownOptions(this.userCategoryOptions)
+    
     async selectUserCategory(option:string){ // option implies text not the dropdown value
         await this.userCategoryDropdown.selectOption(option) 
     }
